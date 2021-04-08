@@ -4,12 +4,15 @@
       <a href class="navbar-brand" @click.prevent>Holmquist</a>
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
-          <router-link to="/home" class="nav-link">
+          <router-link to="/" class="nav-link">
            Home
           </router-link>
         </li>
         <li class="nav-item">
           <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link v-if="currentUser" to="/newPost" class="nav-link">Create</router-link>
         </li>
       </div>
 

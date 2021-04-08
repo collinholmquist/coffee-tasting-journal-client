@@ -1,16 +1,28 @@
 import axios from 'axios';
-import authHeader from './auth-header';
+import authHeader from './auth.header'
 
-const API_URL = 'http://localhost:8080/users/';
+const API_URL = 'http://localhost:8080';
 
 class UserService {
-  getPublicContent() {
-    return axios.get(API_URL + 'all');
+  getPublic() {
+    return axios.get(API_URL + '/home');
   }
 
-  getUserBoard() {
-    return axios.get(API_URL + 'user', { headers: authHeader() });
+  getUserPosts(id) {
+    return axios.get(API_URL + `/posts/${id}`);
+  }
+
+  createPosts(data) {
+    return axios.post(API_URL + `/posts`, data, {headers: authHeader() })
+  }
+
+  findOnePost(post_id, user_id) {
+    return axios.get(API_URL +`/posts/${user_id}/${post_id}`)
+  }
+
+  updatePost(data, post_id, user_id) {
+    return axios.put(API_URL + `/posts/${user_id}/${post_id}`, data)
   }
 }
 
-  export default new UserService()
+export default new UserService()

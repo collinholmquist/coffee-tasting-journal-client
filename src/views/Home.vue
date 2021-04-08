@@ -16,13 +16,50 @@
     <p>
       <strong>Email:</strong>
       {{currentUser.email}}
+    
     </p>
+
+    <router-view/>
+
+    <div v-for="post in publicPosts" :key="post.id">
+          <Post v-bind:post= "post"></Post>
+    </div>
+
+  
   </div>
 </template>
 
 <script>
+
+import UserService from '../services/data.service'
+import Post from '../views/Post'
+
 export default {
-  name: 'Home',
+  name: 'home',
+  components: {
+    Post
+  },
+
+  data() {
+    return {
+      publicPosts:  []
+    }
+
+  },
+
+  methods: {
+
+    getPublicPosts() {
+        UserService.getPublic()
+        .then(response => {
+          this.publicPosts = response.data
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    }
+  },
+
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
@@ -32,6 +69,9 @@ export default {
     if (!this.currentUser) {
       this.$router.push('/login');
     }
+
+    this.getPublicPosts()
+   
   }
 };
 </script>
