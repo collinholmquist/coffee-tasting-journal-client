@@ -3,6 +3,8 @@
         <ul>
             <div v-if="post.id == current_post_id">
 
+                <button type='button' class='close' >Close</button>
+
                 <div class='form-group'>
                 <label for='roaster'>Roaster</label>
                 <input 
@@ -83,6 +85,7 @@
 
                 <button @click="save" class='btn btn-primary'>Save</button>
                 <button @click="cancel" class="btn btn-primary">Cancel</button>
+                <button @click="del" class="btn btn-danger">Delete</button>
             </div>
 
             <div v-else>
@@ -107,38 +110,35 @@ export default ({
     data() {
         return {
             singlePost: null,
-            singlePostBefore: null,
+            postBeforeEdit: null,
             postId: null
         }
     },
+    mounted() {
+       
+    },
     created() {
         this.setValues()
+        this.postBeforeEdit = Object.assign({}, this.post)
     },
 
     methods: {
-        /* getOnePost(post_id) {
-                 UserService.findOnePost(post_id, this.$store.state.auth.user.id )
-                .then(response => {
-                    this.currentPost = response.data
-
-                })
-                .catch(e => {
-                    console.log(e)
-                })
-            }, */
+       
             setValues() {
                 this.singlePost = this.post
-                this.postId = this.current_post_id
-                this.singlePostBefore = this.post
+                this.postId = this.current_post_id            
             },
 
             save() {
-                
                 this.$emit('saved', {from_post: this.singlePost})
             },
 
             cancel() {
-                this.setValues()
+                Object.assign(this.post, this.postBeforeEdit)
+            },
+
+            del(){
+                this.$emit('deleted')
             }
     }
     

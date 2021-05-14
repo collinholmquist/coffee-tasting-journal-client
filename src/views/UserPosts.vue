@@ -13,6 +13,7 @@
                         v-bind:current_post_id="currentId"
                         v-on:reset-current-id="resetCurrentId"
                         @saved="updateOnePost" :from_post="post"
+                        @deleted="deleteOnePost"
                     >
                     </Post>
             </div>
@@ -69,8 +70,21 @@
                 UserService.updatePost(post, this.currentId, this.$store.state.auth.user.id)
                 .then(response => {
                     console.log(response.data)
-                    //this.$router.push({name: "UserPosts"})
                 })
+            },
+            deleteOnePost(){
+
+                UserService.deletePost(this.currentId, this.$store.state.auth.user.id)
+                .then(response => {
+                    console.log(response)
+                    const postIndex = this.userPosts.findIndex(p => p.id === this.currentId)
+                    //console.log(postIndex)
+                    //delete from local state until refresh
+                    this.userPosts.splice(postIndex, 1)
+                }).catch(e => {
+                    console.log(e)
+                })
+
             }
         },
         created() {

@@ -23,6 +23,10 @@ class UserService {
   updatePost(data, post_id, user_id) {
     return axios.put(API_URL + `/posts/${user_id}/${post_id}`, data)
   }
+
+  deletePost(post_id, user_id) {
+    return axios.delete(API_URL + `/posts/${user_id}/${post_id}`)
+  }
 }
 
 export default new UserService()

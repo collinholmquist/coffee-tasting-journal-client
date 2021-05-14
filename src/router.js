@@ -32,6 +32,7 @@ export const router = new Router({
       },
       {
         path: '/user',
+        name: 'userposts',
         component: UserPosts
 
       }/* ,
