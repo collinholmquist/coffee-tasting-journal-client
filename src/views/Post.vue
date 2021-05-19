@@ -1,124 +1,51 @@
 <template>
     <div>
-        <ul>
-            <div v-if="post.id == current_post_id">
-
-                <button type='button' class='close' >Close</button>
-
-                <div class='form-group'>
-                <label for='roaster'>Roaster</label>
-                <input 
-                    type='text'
-                    class='form-control'
-                    id='roaster'
-                    required
-                    v-model='singlePost.roaster'
-                    name='roaster'
-                />
-                </div>    
-
-                <div class='form-group'>
-                    <label for='origin'>Origin</label>
-                    <input 
-                        type ='text'
-                        class='form-control'
-                        id='origin'
-                        required
-                        v-model='singlePost.origin'
-                        name='origin'
-                    />
-                </div>    
-
-                <div class='form-group'>
-                    <label for='brew_method'>Brew Method</label>
-                    <input 
-                        type='text'
-                        class='form-control'
-                        id='brew_method'
-                        required
-                        v-model="singlePost.brew_method"
-                        name='brew_method'
-                    />
-                </div>    
-
-                <div class='form-group'>
-                    <label for='tasting_notes'>Tasting Notes</label>
-                    <input 
-                        type='text'
-                        class='form-control'
-                        id='tasting_notes'
-                        required
-                        v-model='singlePost.tasting_notes'
-                        name='tasting_notes'
-                    />
-                </div>    
-
-                <div class='form-group'>
-                    <label>Rating</label>
-                    <select class='form-select' v-model="singlePost.rating">
-                        <option disabled value=''>Select a Rating</option>
-                        <option value='5'>5</option>
-                        <option value='4'>4</option>
-                        <option value='3'>3</option>
-                        <option value='2'>2</option>
-                        <option value='1'>1</option>
-                    </select>
-                </div>  
-
-                <div class='form-group'>
-                    <label for='comments'>Comments</label>
-                    <input 
-                        type='text'
-                        class='form-control'
-                        id='comments'
-                        v-model='singlePost.comments'
-                        name='comments'
-                    />
-                </div> 
-
-                <div class='form-group'>
-                    <label for='public'>Make Public?</label>
-                    <input type ='checkbox' id='public' v-model="singlePost.public">
-                </div>  
-
-
-
-                <button @click="save" class='btn btn-primary'>Save</button>
-                <button @click="cancel" class="btn btn-primary">Cancel</button>
-                <button @click="del" class="btn btn-danger">Delete</button>
+            <div v-if="isEditing">
+                <EditModal
+                    :postToEdit="singlePost"
+                    @deleted="del"
+                    @saved='save' 
+                    @canceled='cancel'
+                ></EditModal>
+                
             </div>
 
             <div v-else>
+                <button @click='toggleEditingForm' class='btn'> Edit</button>
                 <li>{{singlePost.id}}</li>
                 <li>{{singlePost.roaster}}</li>
             </div>
-            
-        </ul>
-
     </div>
 </template>
 
 <script>
 
 //import UserService from "../services/data.service"
+import EditModal from '../views/EditPost'
 
 export default ({
+    components:{
+        EditModal
+    },
     props: {
         post: Object,
-        current_post_id: Number
     },
     data() {
         return {
+            //singlePost is the components version of one post from the list of posts
             singlePost: null,
             postBeforeEdit: null,
-            postId: null
+            postId: null,
+            isEditing: false
         }
     },
     mounted() {
        
     },
     created() {
+    
         this.setValues()
+        //create a copy if cancelled is pressed.  
         this.postBeforeEdit = Object.assign({}, this.post)
     },
 
@@ -126,20 +53,32 @@ export default ({
        
             setValues() {
                 this.singlePost = this.post
-                this.postId = this.current_post_id            
+                this.postId = this.post.id         
             },
 
-            save() {
-                this.$emit('saved', {from_post: this.singlePost})
+            save(singlePost) {
+                this.$emit('saved', singlePost)
+                this.isEditing = false
             },
 
             cancel() {
                 Object.assign(this.post, this.postBeforeEdit)
+                this.isEditing = false
+            },
+
+            toggleEditingForm() {
+                this.isEditing = true
             },
 
             del(){
-                this.$emit('deleted')
-            }
+                this.isEditing = false
+                this.$emit('deleted', this.post)
+            }/* ,
+            
+            close() {
+
+                this.$emit('close')
+            } */
     }
     
 })

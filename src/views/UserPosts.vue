@@ -4,15 +4,10 @@
         <div class='jumbotron'>
             <router-view />
 
-            <div v-for= "post in userPosts" 
-                    :key="post.id" 
-                    @click="activePost(post, post.id)"
-                    :class="{active: post.id == currentId}"> 
+            <div v-for= "post in userPosts" v-bind:key="post.id" > 
                     <Post 
                         v-bind:post="post" 
-                        v-bind:current_post_id="currentId"
-                        v-on:reset-current-id="resetCurrentId"
-                        @saved="updateOnePost" :from_post="post"
+                        @saved="updateOnePost"
                         @deleted="deleteOnePost"
                     >
                     </Post>
@@ -35,8 +30,6 @@
             return {
                 user: {},
                 userPosts: [],
-                currentPost: null,
-                currentId: -1,
             }
         },
         computed: {
@@ -55,36 +48,48 @@
                 })
             },
 
-            activePost(post, id) {
-                this.currentPost = post
-                this.currentId = id
-                //console.log(this.currentId)
-            },
+            /* resetCurrentId() {
 
-            resetCurrentId() {
-                this.currentPost = null
-                this.currentId = -1
-            },
+                console.log(this.selectedPost)
+                console.log(this.currentId)
+
+                this.activePost(null, -1)
+
+            } */
             updateOnePost(post){
 
-                UserService.updatePost(post, this.currentId, this.$store.state.auth.user.id)
+                UserService.updatePost(post, post.id, this.$store.state.auth.user.id)
                 .then(response => {
                     console.log(response.data)
+
+                    const postIndex = this.userPosts.findIndex(p => p.id === post.id)
+                    this.userPosts.splice(postIndex, 1, post)
                 })
             },
-            deleteOnePost(){
+            deleteOnePost(post){
 
-                UserService.deletePost(this.currentId, this.$store.state.auth.user.id)
+                UserService.deletePost(post.id, this.$store.state.auth.user.id)
                 .then(response => {
                     console.log(response)
-                    const postIndex = this.userPosts.findIndex(p => p.id === this.currentId)
+                    
+                    const postIndex = this.userPosts.findIndex(p => p.id === post.id)
+                
+                    this.userPosts.splice(postIndex, 1)
+
+                    /* this.userPosts.forEach(element => {
+                        console.log(element.id)
+                    })
+                    console.log('to be deleted', postIndex)
                     //console.log(postIndex)
                     //delete from local state until refresh
-                    this.userPosts.splice(postIndex, 1)
+                    */
+
+                    /* this.userPosts.forEach(element => {
+                        console.log(element.id)
+                    }); */
                 }).catch(e => {
                     console.log(e)
-                })
-
+                }) 
             }
         },
         created() {
