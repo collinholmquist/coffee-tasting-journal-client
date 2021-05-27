@@ -11,12 +11,40 @@
             </div>
 
             <div v-else>
-                <button @click='toggleEditingForm' class='btn'> Edit</button>
-                <li>{{singlePost.id}}</li>
-                <li>{{singlePost.roaster}}</li>
+
+                <div class='card' >
+                    <div class='row'> 
+                        <div class='col-sm-10'>
+                            <h5 class='card-title'> {{singlePost.roaster}} | {{this.convertDate(this.singlePost.updatedAt)}} </h5>
+                            <h6 class='card-subtitle text-muted'> {{singlePost.origin}} </h6>
+                            <hr>
+                            <p class= 'card-text'><em>Brew Method: </em> {{singlePost.brew_method}} <br><em>Tasting Notes: </em> {{singlePost.tasting_notes}} </p>
+                            <div>
+                                <span v-for="(star, index) in starRating" v-bind:key=index>{{star}}</span>
+                            </div> 
+                          
+                        </div>
+                        <div class='col-sm-2'>
+                             <button v-show='!viewOnly' @click='toggleEditingForm' class='btn'> Edit</button>
+                        </div>
+                        
+                    </div>
+                </div>
+                
             </div>
     </div>
 </template>
+
+<style scoped>
+    .card {
+        width: 30rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem; 
+        padding: 1rem;
+    }
+
+
+</style>
 
 <script>
 
@@ -29,6 +57,7 @@ export default ({
     },
     props: {
         post: Object,
+        viewOnly: Boolean
     },
     data() {
         return {
@@ -36,7 +65,8 @@ export default ({
             singlePost: null,
             postBeforeEdit: null,
             postId: null,
-            isEditing: false
+            isEditing: false,
+            starRating: []
         }
     },
     mounted() {
@@ -53,7 +83,8 @@ export default ({
        
             setValues() {
                 this.singlePost = this.post
-                this.postId = this.post.id         
+                this.postId = this.post.id
+                this.createStarList(this.post.rating)  
             },
 
             save(singlePost) {
@@ -73,13 +104,26 @@ export default ({
             del(){
                 this.isEditing = false
                 this.$emit('deleted', this.post)
-            }/* ,
-            
-            close() {
+            },
+            convertDate(date){
 
-                this.$emit('close')
-            } */
-    }
-    
+                let converted = new Date(date).toLocaleDateString(
+                'en-us',
+                {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                })
+
+                return converted
+            } ,
+
+            createStarList(numStars){
+                for(let i = 0; i < numStars; i++) {
+                    this.starRating.push(String.fromCodePoint(0x2B50))
+                }
+
+            }
+    }   
 })
 </script>

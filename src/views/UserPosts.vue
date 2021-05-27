@@ -1,11 +1,16 @@
 <template>
     <div class='container'>
-        <h1>Hello from User Posts</h1>
-        <div class='jumbotron'>
+        <div class ='row'>
+            <img src='' class='img-thumbnail' alt='...'>
+            <h2>{{currentUser.username}} Posts</h2>
+        </div>
+        
+        <div>
             <router-view />
 
             <div v-for= "post in userPosts" v-bind:key="post.id" > 
-                    <Post 
+                    <Post
+                        v-bind:viewOnly="viewOnly" 
                         v-bind:post="post" 
                         @saved="updateOnePost"
                         @deleted="deleteOnePost"
@@ -30,6 +35,7 @@
             return {
                 user: {},
                 userPosts: [],
+                viewOnly: false
             }
         },
         computed: {

@@ -1,33 +1,28 @@
 <template>
   <div class="container">
-    <header class="jumbotron">
-      <h3>
-        <strong>{{currentUser.username}}</strong> Profile
-      </h3>
+    <header class='container-md'>
+        <h1>
+         Posts
+        </h1>
     </header>
-    <p>
-      <strong>Token:</strong>
-      {{currentUser.accessToken.substring(0, 20)}} ... {{currentUser.accessToken.substr(currentUser.accessToken.length - 20)}}
-    </p>
-    <p>
-      <strong>Id:</strong>
-      {{currentUser.id}}
-    </p>
-    <p>
-      <strong>Email:</strong>
-      {{currentUser.email}}
-    
-    </p>
 
     <router-view/>
 
     <div v-for="post in publicPosts" :key="post.id">
-          <Post v-bind:post= "post"></Post>
+          <Post v-bind:post= "post"
+                v-bind:viewOnly="viewOnly"
+          ></Post>
     </div>
 
   
   </div>
 </template>
+
+<style scoped>
+    .container-md {
+      padding-top: 1rem;
+    }
+</style>
 
 <script>
 
@@ -42,7 +37,8 @@ export default {
 
   data() {
     return {
-      publicPosts:  []
+      publicPosts:  [],
+      viewOnly: true
     }
 
   },
